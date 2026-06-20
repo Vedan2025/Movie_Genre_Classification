@@ -2,7 +2,6 @@ from pathlib import Path
 import pandas as pd
 import joblib
 
-from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
@@ -22,9 +21,12 @@ model_pipeline = Pipeline([
     (
         "tfidf",
         TfidfVectorizer(
-            max_features=100000,
+            lowercase=True,
+            strip_accents="unicode",
+            max_features=15000,
             ngram_range=(1, 2),
-            min_df=3,
+            min_df=5,
+            max_df=0.95,
             sublinear_tf=True
         )
     ),
@@ -42,9 +44,16 @@ print("Training final model...")
 
 model_pipeline.fit(X, y)
 
+model_path = MODEL_DIR / "cine_sense_model.pkl"
+
 joblib.dump(
     model_pipeline,
-    MODEL_DIR / "cine_sense_model.pkl"
+    model_path,
+    compress=3
 )
 
-print("✓ Model saved successfully")
+print(f"✓ Model saved successfully: {model_path}")
+
+size_mb = model_path.stat().st_size / (1024 * 1024)
+
+print(f"✓ Model size: {size_mb:.2f} MB")

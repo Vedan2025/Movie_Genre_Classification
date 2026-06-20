@@ -28,9 +28,12 @@ X_train, X_valid, y_train, y_valid = train_test_split(
 )
 
 vectorizer = TfidfVectorizer(
-    max_features=100000,
+    lowercase=True,
+    strip_accents="unicode",
+    max_features=15000,
     ngram_range=(1, 2),
-    min_df=3,
+    min_df=5,
+    max_df=0.95,
     sublinear_tf=True
 )
 
